@@ -42,7 +42,7 @@ class AuthController extends Controller
    
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('dashboard')
+            return redirect()->intended('products')
                         ->withSuccess('You have Successfully logged in');
         }
         
@@ -65,7 +65,7 @@ class AuthController extends Controller
             
         Auth::login($user); 
 
-        return redirect("dashboard")->withSuccess('Great! You have Successfully logged in');
+        return redirect("products")->withSuccess('Great! You have Successfully logged in');
     }
     
     /**

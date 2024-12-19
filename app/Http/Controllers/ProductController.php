@@ -32,20 +32,28 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreProductRequest $request): RedirectResponse
-{
-    $data = $request->validated();
-
-    // Check if an image is uploaded
-    if ($request->hasFile('image')) {
-        $data['image'] = $request->file('image')->store('products', 'public'); // Store image in 'storage/app/public/products'
+    {
+        $data = $request->validated();
+    
+        // Check if an image is uploaded and is valid
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            // Store the image and get the path
+            $path = $request->file('image')->store('public/images');
+            
+            // Add the image path to the data array
+            $data['image'] = $path; 
+        } else {
+            // Log the error if the image upload fails
+            \Log::error('Image upload failed.');
+        }
+    
+        // Create the new product with the image data
+        Product::create($data);
+    
+        return redirect()->route('products.index')
+            ->withSuccess('New product is added successfully.');
     }
-
-    Product::create($data);
-
-    return redirect()->route('products.index')
-        ->withSuccess('New product is added successfully.');
-}
-
+    
 
     /**
      * Display the specified resource.
